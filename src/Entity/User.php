@@ -7,14 +7,18 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
 #[ApiResource(itemOperations:['get'],collectionOperations:['post'],normalizationContext:["groups"=>['read']])]
+#[UniqueEntity(fields:["username","email"])]
 class User implements UserInterface,PasswordAuthenticatedUserInterface
 {
     /**
@@ -29,22 +33,33 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string", length=255)
      */
     #[Groups(['read'])]
+    #[Assert\NotBlank]
+    #[Assert\Length(min:6,max:255)]
     private $username;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
+    #[Assert\NotBlank]
+    #[Assert\Regex(pattern:"/(?=.*[A-Z])(?=.*[a-z]).{7,}/", message:"Password must be seven characters long and contain at least one digit, one uppercase letter")]
     private $password;
+
+    #[Assert\NotBlank]
+    #[Assert\Expression(expression:"this.getPassword()===this.getRetypedPassword()",message:"Passwords do not match")]
+    private $retypedPassword;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
     #[Groups(['read'])]
+    #[Assert\NotBlank]
+    #[Assert\Length(min:6,max:255)]
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
+    #[Assert\NotBlank(),Assert\Email()]
     private $email;
 
     /**
@@ -174,5 +189,16 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
     public function eraseCredentials()
     {
         
+    }
+
+    public function getRetypedPassword()
+    {
+        return $this->retypedPassword;
+    }
+
+    public function setRetypedPassword($password)
+    {
+        $this->retypedPassword =$password;
+        return $this;
     }
 }
