@@ -18,7 +18,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
 #[ApiResource(itemOperations:['get'],collectionOperations:['post'],normalizationContext:["groups"=>['read']])]
-#[UniqueEntity(fields:["username","email"])]
+#[UniqueEntity(fields:"username")]
+#[UniqueEntity(fields:"email")]
 class User implements UserInterface,PasswordAuthenticatedUserInterface
 {
     /**
