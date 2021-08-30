@@ -17,7 +17,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
-#[ApiResource(itemOperations:['get'],collectionOperations:['post'],normalizationContext:["groups"=>['read']])]
+#[ApiResource(itemOperations:[
+    'get'=>['security'=>"is_granted('IS_AUTHENTICATED_FULLY')",
+'normalization_context'=>["groups"=>['read']]],
+'put'=>['security'=>"is_granted('IS_AUTHENTICATED_FULLY') and object == user",'denormalization_context'=>["groups"=>['put']]]],
+collectionOperations:['post'=>['denormalization_context'=>['groups'=>['post']]]])]
 #[UniqueEntity(fields:"username")]
 #[UniqueEntity(fields:"email")]
 class User implements UserInterface,PasswordAuthenticatedUserInterface
