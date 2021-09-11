@@ -9,11 +9,10 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass=CommentRepository::class)
  */
-#[ApiResource(
-    collectionOperations:['get'], 
-    itemOperations:['get']
-)]
-class Comment
+#[ApiResource(itemOperations:['get',
+'put'=>['security'=>'is_granted("IS_AUTHENTICATED_FULLY") and object.getAuthor() == user']],
+collectionOperations:['get','post'=>['security'=>'is_granted("IS_AUTHENTICATED_FULLY")']])]
+class Comment implements AuthoredEntityInterface,PublishedEntityInterface
 {
     /**
      * @ORM\Id
@@ -66,7 +65,7 @@ class Comment
         return $this->published;
     }
 
-    public function setPublished(\DateTimeInterface $published): self
+    public function setPublished(\DateTimeInterface $published): PublishedEntityInterface
     {
         $this->published = $published;
 
@@ -78,7 +77,7 @@ class Comment
         return $this->author;
     }
 
-    public function setAuthor(?User $author): self
+    public function setAuthor(UserInterface $author): AuthoredEntityInterface
     {
         $this->author = $author;
 

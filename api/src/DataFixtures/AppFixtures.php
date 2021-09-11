@@ -29,7 +29,7 @@ class AppFixtures extends Fixture
     public function loadBlogPosts(ObjectManager $manager)
     {
         for ($i=0; $i < 20; $i++) { 
-            $num = rand(0,10);
+            $num = rand(0,9);
             $user =$this->getReference('user'.$num);
             $blogPost = new BlogPost();
             $blogPost->setTitle($this->faker->sentence());
@@ -62,10 +62,10 @@ class AppFixtures extends Fixture
     {
         for ($i=0; $i <20 ; $i++) { 
            for ($j=0; $j <rand(1,5) ; $j++) { 
-                $num = rand(0,10);
+                $num = rand(0,9);
                 $user =$this->getReference('user'.$num);
                 $comment = new Comment();
-                $comment->setContent($this->faker->paragraphs());
+                $comment->setContent($this->faker->paragraph());
                 $comment->setAuthor($user);
                 $comment->setPublished($this->faker->dateTimeBetween('-2 years'));
                 $post = $this->getReference('blog_post'.$i);

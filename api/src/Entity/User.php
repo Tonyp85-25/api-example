@@ -19,8 +19,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 #[ApiResource(itemOperations:[
     'get'=>['security'=>"is_granted('IS_AUTHENTICATED_FULLY')",
-'normalization_context'=>["groups"=>['read']]],
-'put'=>['security'=>"is_granted('IS_AUTHENTICATED_FULLY') and object == user",'denormalization_context'=>["groups"=>['put']]]],
+    'normalization_context'=>["groups"=>['read']]],
+    'put'=>['security'=>"is_granted('IS_AUTHENTICATED_FULLY') and object == user",
+    'denormalization_context'=>["groups"=>['put']]]],
 collectionOperations:['post'=>['denormalization_context'=>['groups'=>['post']]]])]
 #[UniqueEntity(fields:"username")]
 #[UniqueEntity(fields:"email")]
@@ -56,7 +57,7 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=255)
      */
-    #[Groups(['read'])]
+    #[Groups(['read','post','put'])]
     #[Assert\NotBlank]
     #[Assert\Length(min:6,max:255)]
     private $name;
@@ -64,7 +65,10 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=255)
      */
-    #[Assert\NotBlank(),Assert\Email()]
+    #[Groups(['post','put'])]
+    #[Assert\NotBlank()]
+    #[Assert\Length(min:6,max:255)]
+    #[Assert\Email()]
     private $email;
 
     /**
