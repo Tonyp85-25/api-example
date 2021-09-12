@@ -9,15 +9,22 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=BlogPostRepository::class)
  */
- #[ApiResource(itemOperations:['get',
- 'put'=>['security'=>'is_granted("IS_AUTHENTICATED_FULLY") and object.getAuthor() == user']],
- collectionOperations:['get','post'=>['security'=>'is_granted("IS_AUTHENTICATED_FULLY")']])]
-
+ #[ApiResource(
+     itemOperations:[
+    'get',
+     'put'=>[
+         'security'=>'is_granted("IS_AUTHENTICATED_FULLY") and object.getAuthor() == user'
+         ]
+        ],
+        collectionOperations:['get','post'=>['security'=>'is_granted("IS_AUTHENTICATED_FULLY")']],
+        denormalizationContext:['groups'=>'post']
+     )]
 class BlogPost implements AuthoredEntityInterface, PublishedEntityInterface
 {
     /**
@@ -31,6 +38,7 @@ class BlogPost implements AuthoredEntityInterface, PublishedEntityInterface
      * @ORM\Column(type="string", length=255)
     */
     #[Assert\NotBlank()]
+    #[Groups('post')]
     private $title;
 
     /**
@@ -44,6 +52,7 @@ class BlogPost implements AuthoredEntityInterface, PublishedEntityInterface
      * @ORM\Column(type="text")
     */
     #[Assert\Length(min:20)]
+    #[Groups('post')]
     private $content;
 
     #[ORM\ManyToOne(targetEntity:User::class,inversedBy:"posts")]
@@ -54,6 +63,7 @@ class BlogPost implements AuthoredEntityInterface, PublishedEntityInterface
      * @ORM\Column(type="string", length=255, nullable=true)
     */
     #[Assert\NotBlank()]
+    #[Groups('post')]
     private $slug;
 
     /**

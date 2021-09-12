@@ -18,11 +18,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
 #[ApiResource(itemOperations:[
-    'get'=>['security'=>"is_granted('IS_AUTHENTICATED_FULLY')",
-    'normalization_context'=>["groups"=>['read']]],
+    'get'=>[
+        'security'=>"is_granted('IS_AUTHENTICATED_FULLY')",
+        'normalization_context'=>["groups"=>'get']
+    ],
     'put'=>['security'=>"is_granted('IS_AUTHENTICATED_FULLY') and object == user",
-    'denormalization_context'=>["groups"=>['put']]]],
-collectionOperations:['post'=>['denormalization_context'=>['groups'=>['post']]]])]
+    'denormalization_context'=>['groups'=>'put']]],
+collectionOperations:['post'=>['denormalization_context'=>['groups'=>'post']]])]
 #[UniqueEntity(fields:"username")]
 #[UniqueEntity(fields:"email")]
 class User implements UserInterface,PasswordAuthenticatedUserInterface
@@ -38,7 +40,7 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=255)
      */
-    #[Groups(['read'])]
+    #[Groups(['get'])]
     #[Assert\NotBlank]
     #[Assert\Length(min:6,max:255)]
     private $username;
@@ -57,7 +59,7 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=255)
      */
-    #[Groups(['read','post','put'])]
+    #[Groups(['get','post','put'])]
     #[Assert\NotBlank]
     #[Assert\Length(min:6,max:255)]
     private $name;
@@ -74,7 +76,7 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
     /**
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="author", orphanRemoval=true)
      */
-    #[Groups(['read'])]
+    #[Groups(['get'])]
     private $comments;
 
     /**
