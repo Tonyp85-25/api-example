@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Repository\BlogPostRepository;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -17,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
  #[ApiResource(
      itemOperations:[
-    'get',
+    'get'=>['normalization_context' => ['groups'=> 'get-blogpost-with-author']],
      'put'=>[
          'security'=>'is_granted("IS_AUTHENTICATED_FULLY") and object.getAuthor() == user'
          ]
@@ -32,13 +33,14 @@ class BlogPost implements AuthoredEntityInterface, PublishedEntityInterface
     * @ORM\GeneratedValue
     * @ORM\Column(type="integer")
     */
+    #[Groups(['get-blogpost-with-author'])]
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
     */
     #[Assert\NotBlank()]
-    #[Groups('post')]
+    #[Groups(['post','get-blogpost-with-author'])]
     private $title;
 
     /**
@@ -46,29 +48,33 @@ class BlogPost implements AuthoredEntityInterface, PublishedEntityInterface
     */
     #[Assert\NotBlank()]
     #[Assert\DateTime()]
+    #[Groups(['get-blogpost-with-author'])]
     private $published;
 
     /**
      * @ORM\Column(type="text")
     */
     #[Assert\Length(min:20)]
-    #[Groups('post')]
+    #[Groups(['post','get-blogpost-with-author'])]
     private $content;
 
     #[ORM\ManyToOne(targetEntity:User::class,inversedBy:"posts")]
     #[ORM\JoinColumn(nullable:false)]
+    #[Groups(['get-blogpost-with-author'])]
     private $author;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
     */
     #[Assert\NotBlank()]
-    #[Groups('post')]
+    #[Groups(['post','get-blogpost-with-author'])]
     private $slug;
 
     /**
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="post", orphanRemoval=true)
     */
+    #[ApiSubresource()]
+    #[Groups(['get-blogpost-with-author'])]
     private $comments;
 
     public function __construct()

@@ -40,7 +40,7 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=255)
      */
-    #[Groups(['get'])]
+    #[Groups(['get','get-comment-with-author','get-blogpost-with-author'])]
     #[Assert\NotBlank]
     #[Assert\Length(min:6,max:255)]
     private $username;
@@ -59,7 +59,7 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=255)
      */
-    #[Groups(['get','post','put'])]
+    #[Groups(['get','post','put','get-comment-with-author', 'get-blogpost-with-author'])]
     #[Assert\NotBlank]
     #[Assert\Length(min:6,max:255)]
     private $name;

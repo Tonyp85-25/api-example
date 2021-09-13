@@ -17,7 +17,8 @@ use Symfony\Component\Validator\Constraints as Assert;
     'put'=>['security'=>"is_granted('IS_AUTHENTICATED_FULLY') and object.getAuthor() == user"]
     ],
     collectionOperations:['get',
-    'post'=>['security'=>"is_granted('IS_AUTHENTICATED_FULLY')"]],
+    'post'=>['security'=>"is_granted('IS_AUTHENTICATED_FULLY')"],
+    "api_blog_posts_comments_get_subresource"=>["normalization_context"=>['groups'=>'get-comment-with-author']]],
     denormalizationContext:['groups'=>'post']
     )]
 class Comment implements AuthoredEntityInterface,PublishedEntityInterface
@@ -27,12 +28,13 @@ class Comment implements AuthoredEntityInterface,PublishedEntityInterface
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
+    #[Groups(['get-comment-with-author','get-blogpost-with-author'])]
     private $id;
 
     /**
      * @ORM\Column(type="text")
      */
-    #[Groups('post')]
+    #[Groups(['post','get-comment-with-author', 'get-blogpost-with-author'])]
     #[Assert\NotBlank()]
     #[Assert\Length(min:5,max:3000)]
     private $content;
@@ -40,6 +42,7 @@ class Comment implements AuthoredEntityInterface,PublishedEntityInterface
     /**
      * @ORM\Column(type="datetime")
      */
+    #[Groups(['get-comment-with-author', 'get-blogpost-with-author'])]
     private $published;
 
     /**
@@ -52,6 +55,7 @@ class Comment implements AuthoredEntityInterface,PublishedEntityInterface
      * @ORM\ManyToOne(targetEntity=BlogPost::class, inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
      */
+    #[Groups('post')]
     private $post;
 
     public function getId(): ?int
