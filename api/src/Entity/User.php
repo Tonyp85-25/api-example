@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(itemOperations:[
     'get'=>[
         'security'=>"is_granted('IS_AUTHENTICATED_FULLY')",
-        'normalization_context'=>["groups"=>'get']
+        'normalization_context'=>["groups"=>['get']]
     ],
     'put'=>['security'=>"is_granted('IS_AUTHENTICATED_FULLY') and object == user",
     'denormalization_context'=>['groups'=>'put']]],
@@ -33,8 +33,9 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read"})
+     *
      */
+    #[Groups(['get'])]
     private $id; 
 
     /**
@@ -79,14 +80,18 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
     #[Groups(['get'])]
     private $comments;
 
-    /**
-     * @ORM\OneToMany(targetEntity=BlogPost::class, mappedBy="author", orphanRemoval=true)
-     */
-    private $posts;
+   
+    // #[ORM\OneToMany(targetEntity: BlogPost::class,mappedBy:"author", orphanRemoval:true)]
+    // private $posts;
 
    
     #[ORM\Column(type:"json")]
     private $roles = [];
+
+    /**
+     * @ORM\OneToMany(targetEntity=BlogPost::class, mappedBy="author", orphanRemoval=true)
+     */
+    private $blogPosts;
 
     // ...
     public function getRoles(): array
@@ -102,6 +107,7 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
     {
         $this->comments = new ArrayCollection();
         $this->posts = new ArrayCollection();
+        $this->blogPosts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -210,6 +216,36 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
     public function setRetypedPassword($password)
     {
         $this->retypedPassword =$password;
+        return $this;
+    }
+
+    /**
+     * @return Collection|BlogPost[]
+     */
+    public function getBlogPosts(): Collection
+    {
+        return $this->blogPosts;
+    }
+
+    public function addBlogPost(BlogPost $blogPost): self
+    {
+        if (!$this->blogPosts->contains($blogPost)) {
+            $this->blogPosts[] = $blogPost;
+            $blogPost->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBlogPost(BlogPost $blogPost): self
+    {
+        if ($this->blogPosts->removeElement($blogPost)) {
+            // set the owning side to null (unless already changed)
+            if ($blogPost->getAuthor() === $this) {
+                $blogPost->setAuthor(null);
+            }
+        }
+
         return $this;
     }
 }
