@@ -14,6 +14,21 @@ class AppFixtures extends Fixture
    
     private $faker;
     #TODO assign right roles to users
+    const USERS =[
+        [   'username'=> 'superadminuser',
+            'name'=> 'super admin',
+            'email'=> 'superadmin@api.com',
+            'password'=>'admin',
+            'roles'=>[User::ROLE_SUPERADMIN]
+        ],
+        ['username'=> 'adminuser',
+        'name'=> 'admin user',
+        'email'=> 'admin@api.com',
+        'password'=>'admin',
+        'roles'=>[User::ROLE_ADMIN]
+        ]
+
+    ];
     public function __construct(private UserPasswordHasherInterface $passwordHasher)
     {
         $this->passwordHasher = $passwordHasher;
@@ -45,15 +60,27 @@ class AppFixtures extends Fixture
 
     public function loadUsers(ObjectManager $manager)
     {
+        $roles = [User::ROLE_WRITER,User::ROLE_EDITOR,User::ROLE_COMMENTATOR];
         for ($i=0; $i <10 ; $i++) { 
+            $num = rand(0,2);
             $user = new User();
             $user->setUsername($this->faker->userName());
             $user->setPassword($this->passwordHasher->hashPassword($user, 'secret123'));
             $user->setName($this->faker->name());
             $user->setEmail($this->faker->email());
+            $user->setRoles([$roles[$num]]);
             $manager->persist($user);
             $this->addReference('user'.$i,$user);
         }
+      foreach (self::USERS as $fakeUser) {
+        $user = new User();
+        $user->setUsername($fakeUser['username']);
+        $user->setPassword($this->passwordHasher->hashPassword($user, $fakeUser['password']));
+        $user->setName($fakeUser['name']);
+        $user->setEmail($fakeUser['email']);
+        $user->setRoles($fakeUser['roles']);
+        $manager->persist($user);
+      }
       
         $manager->flush();
     }
