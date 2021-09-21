@@ -20,10 +20,10 @@ use Symfony\Component\Validator\Constraints as Assert;
         itemOperations:[
        'get'=>['normalization_context' => ['groups'=> 'get-blogpost-with-author']],
         'put'=>[
-            'security'=>'is_granted("IS_AUTHENTICATED_FULLY") and object.getAuthor() == user'
+            'security'=>'is_granted("ROLE_EDITOR") or (is_granted("ROLE_WRITER") and object.getAuthor() == user)'
             ]
            ],
-           collectionOperations:['get','post'=>['security'=>'is_granted("IS_AUTHENTICATED_FULLY")']],
+           collectionOperations:['get','post'=>['security'=>'is_granted("ROLE_WRITER")']],
            denormalizationContext:['groups'=>'post']
         )]
    class BlogPost implements AuthoredEntityInterface, PublishedEntityInterface

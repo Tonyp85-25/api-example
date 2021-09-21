@@ -13,7 +13,7 @@ class AppFixtures extends Fixture
 {
    
     private $faker;
-
+    #TODO assign right roles to users
     public function __construct(private UserPasswordHasherInterface $passwordHasher)
     {
         $this->passwordHasher = $passwordHasher;

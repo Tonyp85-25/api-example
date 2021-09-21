@@ -29,6 +29,14 @@ collectionOperations:['post'=>['denormalization_context'=>['groups'=>'post']]])]
 #[UniqueEntity(fields:"email")]
 class User implements UserInterface,PasswordAuthenticatedUserInterface
 {
+    const ROLE_COMMENTATOR= 'ROLE_COMMENTATOR';
+    const ROLE_WRITER= 'ROLE_WRITER';
+    const ROLE_EDITOR= 'ROLE_EDITOR';
+    const ROLE_ADMIN= 'ROLE_ADMIN';
+    const ROLE_SUPERADMIN= 'ROLE_SUPERADMIN';
+
+    const DEFAULT_ROLES=[self::ROLE_COMMENTATOR];
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -68,7 +76,7 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=255)
      */
-    #[Groups(['post','put'])]
+    #[Groups(['post','put','get-admin','get-owner'])]
     #[Assert\NotBlank()]
     #[Assert\Length(min:6,max:255)]
     #[Assert\Email()]
@@ -97,10 +105,13 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        //$roles[] = 'ROLE_USER';
 
         return array_unique($roles);
+    }
+    public function setRoles(array $roles)
+    {
+        $this->roles =$roles;
     }
 
     public function __construct()
@@ -108,6 +119,7 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
         $this->comments = new ArrayCollection();
         $this->posts = new ArrayCollection();
         $this->blogPosts = new ArrayCollection();
+        $this->roles = self::DEFAULT_ROLES;
     }
 
     public function getId(): ?int

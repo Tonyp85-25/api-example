@@ -14,10 +14,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 #[ApiResource( 
     itemOperations:['get',
-    'put'=>['security'=>"is_granted('IS_AUTHENTICATED_FULLY') and object.getAuthor() == user"]
+    'put'=>['security'=>" is_granted('ROLE_EDITOR') or (is_granted('ROLE_COMMENTATOR') and object.getAuthor() == user)"]
     ],
     collectionOperations:['get',
-    'post'=>['security'=>"is_granted('IS_AUTHENTICATED_FULLY')"],
+    'post'=>['security'=>"is_granted('ROLE_COMMENTATOR')"],
     "api_blog_posts_comments_get_subresource"=>["normalization_context"=>['groups'=>'get-comment-with-author']]],
     denormalizationContext:['groups'=>'post']
     )]
