@@ -13,21 +13,22 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
-#[ApiResource(itemOperations:[
+#[ApiResource(
+    itemOperations:[
     'get'=>[
         'security'=>"is_granted('IS_AUTHENTICATED_FULLY')",
         'normalization_context'=>["groups"=>['get']]
     ],
     'put'=>['security'=>"is_granted('IS_AUTHENTICATED_FULLY') and object == user",
     'denormalization_context'=>['groups'=>'put']]],
-collectionOperations:['post'=>['denormalization_context'=>['groups'=>'post']]])]
+    collectionOperations:['post'=>['denormalization_context'=>['groups'=>'post']]]
+)]
 #[UniqueEntity(fields:"username")]
 #[UniqueEntity(fields:"email")]
-class User implements UserInterface,PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     const ROLE_COMMENTATOR= 'ROLE_COMMENTATOR';
     const ROLE_WRITER= 'ROLE_WRITER';
@@ -44,14 +45,14 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
      *
      */
     #[Groups(['get'])]
-    private $id; 
+    private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
     #[Groups(['get','get-comment-with-author','get-blogpost-with-author'])]
     #[Assert\NotBlank]
-    #[Assert\Length(min:6,max:255)]
+    #[Assert\Length(min:6, max:255)]
     private $username;
 
     /**
@@ -62,7 +63,7 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
     private $password;
 
     #[Assert\NotBlank]
-    #[Assert\Expression(expression:"this.getPassword()===this.getRetypedPassword()",message:"Passwords do not match")]
+    #[Assert\Expression(expression:"this.getPassword()===this.getRetypedPassword()", message:"Passwords do not match")]
     private $retypedPassword;
 
     /**
@@ -70,7 +71,7 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
      */
     #[Groups(['get','post','put','get-comment-with-author', 'get-blogpost-with-author'])]
     #[Assert\NotBlank]
-    #[Assert\Length(min:6,max:255)]
+    #[Assert\Length(min:6, max:255)]
     private $name;
 
     /**
@@ -78,7 +79,7 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
      */
     #[Groups(['post','put','get-admin','get-owner'])]
     #[Assert\NotBlank()]
-    #[Assert\Length(min:6,max:255)]
+    #[Assert\Length(min:6, max:255)]
     #[Assert\Email()]
     private $email;
 
@@ -93,7 +94,8 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
     // private $posts;
 
    
-    #[ORM\Column(type:"json")]
+    #[ORM\Column(type:"simple_array")]
+    #[Groups(['get-admin','get-owner'])]
     private $roles = [];
 
     /**
@@ -212,12 +214,10 @@ class User implements UserInterface,PasswordAuthenticatedUserInterface
 
     public function getSalt()
     {
-        
     }
 
     public function eraseCredentials()
     {
-        
     }
 
     public function getRetypedPassword()
