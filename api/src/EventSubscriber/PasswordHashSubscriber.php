@@ -1,4 +1,5 @@
 <?php
+
 namespace App\EventSubscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
@@ -14,7 +15,7 @@ class PasswordHashSubscriber implements EventSubscriberInterface
 {
     public function __construct(private UserPasswordHasherInterface $passwordHasher)
     {
-        $this->passwordHasher= $passwordHasher;
+        $this->passwordHasher = $passwordHasher;
     }
     public static function getSubscribedEvents()
     {
@@ -25,15 +26,14 @@ class PasswordHashSubscriber implements EventSubscriberInterface
 
     public function hashPassword(ViewEvent $event)
     {
-        $user= $event->getControllerResult();
-        $method= $event->getRequest()->getMethod();
+        $user = $event->getControllerResult();
+        $method = $event->getRequest()->getMethod();
 
-        if(!$user instanceof User || Request::METHOD_POST !== $method)
-        {
+        if (!$user instanceof User || !in_array($method, [Request::METHOD_POST])) {
             return;
         }
 
-       $user->setPassword($this->passwordHasher->hashPassword($user,$user->getPassword()));
-       //$event->setResponse($user);
+        $user->setPassword($this->passwordHasher->hashPassword($user, $user->getPassword()));
+        //$event->setResponse($user);
     }
 }
