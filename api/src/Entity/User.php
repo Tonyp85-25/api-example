@@ -81,17 +81,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Expression(expression: "this.getPassword()===this.getRetypedPassword()", message: "Passwords do not match", groups: ['post'])]
     private $retypedPassword;
 
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(groups: ['put-reset-password'])]
     #[Groups('put-reset-password')]
     #[Assert\Regex(pattern: "/(?=.*[A-Z])(?=.*[a-z]).{7,}/", message: "Password must be seven characters long and contain at least one digit, one uppercase letter")]
     private $newPassword;
 
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(groups: ['put-reset-password'])]
     #[Groups('put-reset-password')]
     #[Assert\Expression(expression: "this.getNewPassword()===this.getNewRetypedPassword()", message: "Passwords do not match")]
     private $newRetypedPassword;
 
-    #[Assert\NotBlank]
+    #[Assert\NotBlank(groups: ['put-reset-password'])]
     #[Groups('put-reset-password')]
     #[UserPassword()]
     private $oldPassword;
@@ -135,6 +135,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $blogPosts;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $enabled;
+
+    /**
+     *@ORM\Column(type="string",length=40, nullable=true)
+     */
+    private $confirmationToken;
+
     // ...
     public function getRoles(): array
     {
@@ -154,6 +164,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->posts = new ArrayCollection();
         $this->blogPosts = new ArrayCollection();
         $this->roles = self::DEFAULT_ROLES;
+        $this->enabled = false;
+        $this->confirmationToken = null;
     }
 
     public function getId(): ?int
@@ -369,6 +381,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPasswordChangeDate($passwordChangeDate)
     {
         $this->passwordChangeDate = $passwordChangeDate;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of enabled
+     */
+    public function getEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * Set the value of enabled
+     *
+     * @return  self
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
+
+        return $this;
+    }
+
+    /**
+     * Get 
+     */
+    public function getConfirmationToken()
+    {
+        return $this->confirmationToken;
+    }
+
+
+    public function setConfirmationToken($confirmationToken)
+    {
+        $this->confirmationToken = $confirmationToken;
 
         return $this;
     }
