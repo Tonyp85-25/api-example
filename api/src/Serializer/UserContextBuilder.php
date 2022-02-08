@@ -15,9 +15,9 @@ class UserContextBuilder implements SerializerContextBuilderInterface
 
     public function createFromRequest(Request $request, bool $normalization, ?array $extractedAttributes = null): array
     {
-        $context = $this->decorated->createFromRequest($request,$normalization,$extractedAttributes);
+        $context = $this->decorated->createFromRequest($request, $normalization, $extractedAttributes);
         $resourceClass= $context['resource_class'] ?? null;
-        if(User::class === $resourceClass && isset($context['groups']) && $normalization === true && $this->authorizationChecker->isGranted(User::ROLE_ADMIN)){
+        if (User::class === $resourceClass && isset($context['groups']) && $normalization === true && $this->authorizationChecker->isGranted(User::ROLE_ADMIN)) {
             $context['groups'][]='get-admin';
         }
         return $context;
