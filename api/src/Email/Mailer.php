@@ -15,11 +15,12 @@ class Mailer
         
     }
 
-    public function sendMail(User $user) {
-        $email = (new TemplatedEmail())
+    public function sendMail(User $user) 
+    {
+    $email = (new TemplatedEmail())
     ->from('fabien@example.com')
     ->to(new Address($user->getEmail())) //a string is accepted as well
-    ->subject('Thanks for signing up!')
+    ->subject('Please confirm your account!')
 
     // path of the Twig template to render
     ->htmlTemplate('emails/signup.html.twig')
@@ -27,10 +28,9 @@ class Mailer
     // pass variables (name => value) to the template
     ->context([
         'expiration_date' => new \DateTime('+7 days'),
-        'username' => $user->getUsername,
-    ])
-            ;
-            $this->mailer->send($email);
+        'user' => $user,
+    ]);
+    $this->mailer->send($email);
     }
     // $message = new Email()
 }
