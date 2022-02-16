@@ -8,11 +8,13 @@ RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
     locale-gen
 
 RUN curl -sSk https://getcomposer.org/installer | php -- --disable-tls && \
-   mv composer.phar /usr/local/bin/composer
+    mv composer.phar /usr/local/bin/composer
 
 RUN docker-php-ext-configure intl
 RUN docker-php-ext-install pdo gd opcache intl zip calendar dom mbstring xsl 
 RUN pecl install apcu && docker-php-ext-enable apcu
+
+
 
 
 WORKDIR /var/www/api

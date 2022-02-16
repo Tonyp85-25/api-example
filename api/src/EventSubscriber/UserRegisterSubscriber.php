@@ -8,16 +8,18 @@ use App\Security\TokenGenerator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+
 
 class UserRegisterSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private UserPasswordHasherInterface $passwordHasher,
         private TokenGenerator $tokenGenerator,
-        private \Swift_Mailer $mailer
+       
     ) {
         $this->passwordHasher = $passwordHasher;
     }
@@ -41,5 +43,6 @@ class UserRegisterSubscriber implements EventSubscriberInterface
         $user->setConfirmationToken($this->tokenGenerator->getRandomSecureToken());
 
         // TODO send email
+        
     }
 }
