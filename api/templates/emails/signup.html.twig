@@ -1,7 +1,7 @@
 {% extends "base.html.twig" %}
 
 {% block body %}
-<h3>Hello {{user.name}}, welcome to our API</h3>
+<h3 style="background-color: cornflowerblue;">Hello {{user.name}}, welcome to our API</h3>
 
-<p>Please confirm your email address by clicking <a href="{{url('default_confirm_token',{'token':user.confirmationToken})}}">this</a></p>
+<p>Please confirm your email address by clicking <a href="{{url('default_confirmation_token',{'token':user.confirmationToken})}}">this</a></p>
 {% endblock %}

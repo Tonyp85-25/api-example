@@ -93,7 +93,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[Assert\NotBlank(groups: ['put-reset-password'])]
     #[Groups('put-reset-password')]
-    #[UserPassword()]
+    #[UserPassword(groups:['put-reset-password'])]
     private $oldPassword;
     /**
      * @ORM\Column(type="string", length=255)
