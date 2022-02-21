@@ -34,10 +34,11 @@ use Symfony\Component\Validator\Constraints as Assert;
             'denormalization_context' => ['groups' => 'put-reset-password'],
             'method' => 'PUT',
             'path' => '/users/{id}/reset-password',
-            'controller' => ResetPasswordAction::class
+            'controller' => ResetPasswordAction::class,
+            'validation_groups' => 'put-reset-password'
         ]
     ],
-    collectionOperations: ['post' => ['denormalization_context' => ['groups' => 'post'],'normalization_context'=>["groups" => ['get']]]]
+    collectionOperations: ['post' => ['denormalization_context' => ['groups' => 'post'],'normalization_context'=>["groups" => ['get']],'validation_groups'=>'post']]
 )]
 #[UniqueEntity(fields: "username")]
 #[UniqueEntity(fields: "email")]
