@@ -37,7 +37,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             'controller' => ResetPasswordAction::class
         ]
     ],
-    collectionOperations: ['post' => ['denormalization_context' => ['groups' => 'post']]]
+    collectionOperations: ['post' => ['denormalization_context' => ['groups' => 'post'],'normalization_context'=>["groups" => ['get']]]]
 )]
 #[UniqueEntity(fields: "username")]
 #[UniqueEntity(fields: "email")]
