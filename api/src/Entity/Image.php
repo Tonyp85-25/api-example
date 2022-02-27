@@ -40,6 +40,11 @@ class Image
     #[Groups('get-blogpost-with-author')]
     private $url;
 
+    public function __toString() :string
+    {
+        return $this->id.':'.$this->url;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

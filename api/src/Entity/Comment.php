@@ -61,6 +61,11 @@ class Comment implements AuthoredEntityInterface,PublishedEntityInterface
     #[Groups('post')]
     private $post;
 
+    public function __toString()
+    {
+        return susbstr($this->content,0,20).'...';
+    }
+
     public function getId(): ?int
     {
         return $this->id;

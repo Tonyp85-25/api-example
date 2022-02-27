@@ -168,6 +168,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->enabled = false;
         $this->confirmationToken = null;
     }
+    public function __toString():string
+    {
+        return $this->name;
+    }
 
     public function getId(): ?int
     {

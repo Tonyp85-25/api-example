@@ -105,6 +105,11 @@ class BlogPost implements AuthoredEntityInterface, PublishedEntityInterface
         $this->comments = new ArrayCollection();
         $this->images = new ArrayCollection();
     }
+    
+    public function __toString()
+    {
+        return  $this->title;
+    }
 
     public function getId(): ?int
     {
