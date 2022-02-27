@@ -7,6 +7,7 @@ api_platform:
     versions: [3]
   exception_to_status:
     App\Exception\EmptyBodyException: 400
+    #App\Exception\InvalidConfirmationException: 404
 
   # collection:
   #     pagination:

@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class EmptybodySubscriber implements EventSubscriberInterface
+class EmptyBodySubscriber implements EventSubscriberInterface
 {
     public function onKernelRequest(RequestEvent $event)
     {
